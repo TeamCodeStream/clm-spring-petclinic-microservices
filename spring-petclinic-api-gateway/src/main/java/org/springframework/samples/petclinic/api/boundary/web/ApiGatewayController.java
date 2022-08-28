@@ -15,7 +15,10 @@
  */
 package org.springframework.samples.petclinic.api.boundary.web;
 
+import com.newrelic.api.agent.Trace;
+import com.newrelic.api.agent.TraceLambda;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
 import org.springframework.samples.petclinic.api.application.CustomersServiceClient;
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/gateway")
+@TraceLambda
 public class ApiGatewayController {
 
     private final CustomersServiceClient customersServiceClient;
@@ -46,6 +50,7 @@ public class ApiGatewayController {
     private final ReactiveCircuitBreakerFactory cbFactory;
 
     @GetMapping(value = "owners/{ownerId}")
+    @Trace
     public Mono<OwnerDetails> getOwnerDetails(final @PathVariable int ownerId) {
         return customersServiceClient.getOwner(ownerId)
             .flatMap(owner ->

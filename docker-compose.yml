@@ -11,6 +11,7 @@ services:
     environment:
       # required
       NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      NEW_RELIC_APP_NAME: clm-petclinic-config-server
       # optional
       NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: config-server
@@ -28,6 +29,7 @@ services:
     environment:
       # required
       NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      NEW_RELIC_APP_NAME: clm-petclinic-discovery-server
       # optional
       NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: discovery-server
@@ -48,6 +50,7 @@ services:
     environment:
       # required
       NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      NEW_RELIC_APP_NAME: clm-petclinic-customers-service
       # optional
       NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: customers-service
@@ -69,6 +72,7 @@ services:
     environment:
       # required
       NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      NEW_RELIC_APP_NAME: clm-petclinic-visits-service
       # optional
       NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: visits-service
@@ -90,6 +94,7 @@ services:
     environment:
       # required
       NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      NEW_RELIC_APP_NAME: clm-petclinic-vets-service
       # optional
       NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: vets-service
@@ -111,6 +116,7 @@ services:
     environment:
       # required
       NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      NEW_RELIC_APP_NAME: clm-petclinic-api-gateway
       # optional
       NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: api-gateway
@@ -141,6 +147,7 @@ services:
     environment:
       # required
       NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      NEW_RELIC_APP_NAME: clm-petclinic-admin-server
       # optional
       NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: admin-server
@@ -167,3 +174,9 @@ services:
     mem_limit: 256M
     ports:
       - 9091:9090
+
+  tester:
+    build: spring-petclinic-tester
+    container_name: tester
+    depends_on:
+      -   vets-service
