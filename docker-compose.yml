@@ -2,85 +2,155 @@ version: '2'
 
 services:
   config-server:
-    image: springcommunity/spring-petclinic-config-server
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        ARTIFACT_NAME: ./spring-petclinic-config-server/target/spring-petclinic-config-server-2.6.7
+        DOCKERIZE_VERSION: v0.6.1
+    environment:
+      # required
+      NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      # optional
+      NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: config-server
     mem_limit: 512M
     ports:
-     - 8888:8888
+      - 8888:8888
 
   discovery-server:
-    image: springcommunity/spring-petclinic-discovery-server
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        ARTIFACT_NAME: ./spring-petclinic-discovery-server/target/spring-petclinic-discovery-server-2.6.7
+        DOCKERIZE_VERSION: v0.6.1
+    environment:
+      # required
+      NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      # optional
+      NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: discovery-server
     mem_limit: 512M
     depends_on:
       - config-server
-    entrypoint: ["./dockerize","-wait=tcp://config-server:8888","-timeout=60s","--","java", "org.springframework.boot.loader.JarLauncher"]
+    entrypoint: [ "./dockerize","-wait=http://config-server:8888","-timeout=60s","--", "java", "-javaagent:newrelic/newrelic.jar", "org.springframework.boot.loader.JarLauncher" ]
     ports:
-     - 8761:8761
+      - 8761:8761
 
   customers-service:
-    image: springcommunity/spring-petclinic-customers-service
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        ARTIFACT_NAME: ./spring-petclinic-customers-service/target/spring-petclinic-customers-service-2.6.7
+        DOCKERIZE_VERSION: v0.6.1
+    environment:
+      # required
+      NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      # optional
+      NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: customers-service
     mem_limit: 512M
     depends_on:
-     - config-server
-     - discovery-server
-    entrypoint: ["./dockerize","-wait=tcp://discovery-server:8761","-timeout=60s","--","java", "org.springframework.boot.loader.JarLauncher"]
+      - config-server
+      - discovery-server
+    entrypoint: [ "./dockerize","-wait=http://discovery-server:8761","-timeout=60s","--","java", "-javaagent:newrelic/newrelic.jar", "org.springframework.boot.loader.JarLauncher" ]
     ports:
-    - 8081:8081
+      - 8081:8081
 
   visits-service:
-    image: springcommunity/spring-petclinic-visits-service
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        ARTIFACT_NAME: ./spring-petclinic-visits-service/target/spring-petclinic-visits-service-2.6.7
+        DOCKERIZE_VERSION: v0.6.1
+    environment:
+      # required
+      NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      # optional
+      NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: visits-service
     mem_limit: 512M
     depends_on:
-     - config-server
-     - discovery-server
-    entrypoint: ["./dockerize","-wait=tcp://discovery-server:8761","-timeout=60s","--","java", "org.springframework.boot.loader.JarLauncher"]
+      - config-server
+      - discovery-server
+    entrypoint: [ "./dockerize","-wait=http://discovery-server:8761","-timeout=60s","--","java", "-javaagent:newrelic/newrelic.jar", "org.springframework.boot.loader.JarLauncher" ]
     ports:
-     - 8082:8082
+      - 8082:8082
 
   vets-service:
-    image: springcommunity/spring-petclinic-vets-service
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        ARTIFACT_NAME: ./spring-petclinic-vets-service/target/spring-petclinic-vets-service-2.6.7
+        DOCKERIZE_VERSION: v0.6.1
+    environment:
+      # required
+      NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      # optional
+      NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: vets-service
     mem_limit: 512M
     depends_on:
-     - config-server
-     - discovery-server
-    entrypoint: ["./dockerize","-wait=tcp://discovery-server:8761","-timeout=60s","--","java", "org.springframework.boot.loader.JarLauncher"]
+      - config-server
+      - discovery-server
+    entrypoint: [ "./dockerize","-wait=http://discovery-server:8761","-timeout=60s","--","java", "-javaagent:newrelic/newrelic.jar", "org.springframework.boot.loader.JarLauncher" ]
     ports:
-     - 8083:8083
+      - 8083:8083
 
   api-gateway:
-    image: springcommunity/spring-petclinic-api-gateway
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        ARTIFACT_NAME: ./spring-petclinic-api-gateway/target/spring-petclinic-api-gateway-2.6.7
+        DOCKERIZE_VERSION: v0.6.1
+    environment:
+      # required
+      NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      # optional
+      NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: api-gateway
     mem_limit: 512M
     depends_on:
-     - config-server
-     - discovery-server
-    entrypoint: ["./dockerize","-wait=tcp://discovery-server:8761","-timeout=60s","--","java", "org.springframework.boot.loader.JarLauncher"]
+      - config-server
+      - discovery-server
+    entrypoint: [ "./dockerize","-wait=http://discovery-server:8761","-timeout=60s","--","java", "-javaagent:newrelic/newrelic.jar", "org.springframework.boot.loader.JarLauncher" ]
     ports:
-     - 8080:8080
+      - 8080:8080
 
   tracing-server:
     image: openzipkin/zipkin
     container_name: tracing-server
     mem_limit: 512M
     environment:
-    - JAVA_OPTS=-XX:+UnlockExperimentalVMOptions -Djava.security.egd=file:/dev/./urandom
+      - JAVA_OPTS=-XX:+UnlockExperimentalVMOptions -Djava.security.egd=file:/dev/./urandom
     ports:
-     - 9411:9411
+      - 9411:9411
 
   admin-server:
-    image: springcommunity/spring-petclinic-admin-server
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        ARTIFACT_NAME: ./spring-petclinic-admin-server/target/spring-petclinic-admin-server-2.6.7
+        DOCKERIZE_VERSION: v0.6.1
+    environment:
+      # required
+      NEW_RELIC_LICENSE_KEY: $NEW_RELIC_LICENSE_KEY
+      # optional
+      NEW_RELIC_HOST: ${NEW_RELIC_HOST:-}
     container_name: admin-server
     mem_limit: 512M
     depends_on:
-     - config-server
-     - discovery-server
-    entrypoint: ["./dockerize","-wait=tcp://discovery-server:8761","-timeout=60s","--","java", "org.springframework.boot.loader.JarLauncher"]
+      - config-server
+      - discovery-server
+    entrypoint: [ "./dockerize","-wait=http://discovery-server:8761","-timeout=60s","--","java", "-javaagent:newrelic/newrelic.jar", "org.springframework.boot.loader.JarLauncher" ]
     ports:
-     - 9090:9090
+      - 9090:9090
 
   ## Grafana / Prometheus
 
@@ -89,11 +159,11 @@ services:
     container_name: grafana-server
     mem_limit: 256M
     ports:
-    - 3000:3000
+      - 3000:3000
 
   prometheus-server:
     build: ./docker/prometheus
     container_name: prometheus-server
     mem_limit: 256M
     ports:
-    - 9091:9090
+      - 9091:9090
