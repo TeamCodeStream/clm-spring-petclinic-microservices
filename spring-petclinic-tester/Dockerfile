@@ -1,19 +1,13 @@
 # syntax=docker/dockerfile:1
-FROM amazoncorretto:17 as base
-
-# Install OS packages
+FROM node:18
 WORKDIR /app
+COPY package*json ./
+COPY src ./src
+COPY .prettier* ./
+COPY tsconfig.json ./
 
-FROM amazoncorretto:17 as build
-WORKDIR /src
-COPY src ./src 
-COPY gradle ./gradle
-COPY build.gradle gradlew ./
-RUN --mount=type=cache,target=/root/.gradle \
-      ./gradlew build --console=plain --info --no-daemon --no-watch-fs
+RUN --mount=type=cache,target=/root/.npm \
+    npm install
+RUN npm run verify
 
-FROM base AS final
-WORKDIR /app
-COPY --from=build /src/build/libs/src.jar ./app.jar
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["npm", "run", "start"]
