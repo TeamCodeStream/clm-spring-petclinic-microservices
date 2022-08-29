@@ -39,8 +39,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/gateway")
-@TraceLambda
 public class ApiGatewayController {
 
     private final CustomersServiceClient customersServiceClient;
@@ -50,8 +50,9 @@ public class ApiGatewayController {
     private final ReactiveCircuitBreakerFactory cbFactory;
 
     @GetMapping(value = "owners/{ownerId}")
-    @Trace
+    @Trace(dispatcher = true)
     public Mono<OwnerDetails> getOwnerDetails(final @PathVariable int ownerId) {
+        log.info("Getting owner details for owner/" + ownerId);
         return customersServiceClient.getOwner(ownerId)
             .flatMap(owner ->
                 visitsServiceClient.getVisitsForPets(owner.getPetIds())
