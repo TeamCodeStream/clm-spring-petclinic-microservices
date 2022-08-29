@@ -1,6 +1,6 @@
-# Distributed version of the Spring PetClinic Sample Application built with Spring Cloud 
+# Distributed version of the Spring PetClinic Sample Application built with Spring Cloud
+# With NewRelic agent
 
-[![Build Status](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-petclinic/spring-petclinic-microservices/actions/workflows/maven-build.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This microservices branch was initially derived from [AngularJS version](https://github.com/spring-petclinic/spring-petclinic-angular1) to demonstrate how to split sample Spring application into [microservices](http://www.martinfowler.com/articles/microservices.html).
@@ -14,7 +14,7 @@ Startup of Tracing server, Admin server, Grafana and Prometheus is optional.
 If everything goes well, you can access the following services at given location:
 * Discovery Server - http://localhost:8761
 * Config Server - http://localhost:8888
-* AngularJS frontend (API Gateway) - http://localhost:8080
+* AngularJS frontend (API Gateway) - http://localhost:9999
 * Customers, Vets and Visits Services - random port, check Eureka Dashboard 
 * Tracing Server (Zipkin) - http://localhost:9411/zipkin/ (we use [openzipkin](https://github.com/openzipkin/zipkin/tree/master/zipkin-server))
 * Admin Server (Spring Boot Admin) - http://localhost:9090
@@ -26,14 +26,18 @@ You can tell Config Server to use your local Git repository by using `native` Sp
 `-Dspring.profiles.active=native -DGIT_REPO=/projects/spring-petclinic-microservices-config`
 
 ## Starting services locally with docker-compose
-In order to start entire infrastructure using Docker, you have to build images by executing `./mvnw clean install -P buildDocker` 
-from a project root. Once images are ready, you can start them with a single command
+In order to start entire infrastructure using Docker, you have to build images by executing `./mvnw clean package` 
+from a project root. 
+
+Before starting docker configure your NewRelic ingest key in the environment variable `NEW_RELIC_LICENSE_KEY` i.e. `export NEW_RELIC_LICENSE_KEY=<your key>`
+
+Once images are ready, you can start them with a single command
 `docker-compose up`. Containers startup order is coordinated with [`dockerize` script](https://github.com/jwilder/dockerize). 
 After starting services, it takes a while for API Gateway to be in sync with service registry,
 so don't be scared of initial Spring Cloud Gateway timeouts. You can track services availability using Eureka dashboard
 available by default at http://localhost:8761.
 
-The `master` branch uses an  Alpine linux  with JRE 8 as Docker base. You will find a Java 11 version in the `release/java11` branch.
+The `master` branch uses a Amazon Corretto linux  with JRE 11 as Docker base. 
 
 *NOTE: Under MacOSX or Windows, make sure that the Docker VM has enough memory to run the microservices. The default settings
 are usually not enough and make the `docker-compose up` painfully slow.*
@@ -50,7 +54,7 @@ Each of the java based applications is started with the `chaos-monkey` profile i
 
 [A blog post introducing the Spring Petclinic Microsevices](http://javaetmoi.com/2018/10/architecture-microservices-avec-spring-cloud/) (french language)
 
-You can then access petclinic here: http://localhost:8080/
+You can then access petclinic here: http://localhost:9999/
 
 ![Spring Petclinic Microservices screenshot](docs/application-screenshot.png)
 

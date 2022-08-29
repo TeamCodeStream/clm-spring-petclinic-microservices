@@ -1,7 +1,7 @@
 import got from "got";
 
 // const HOST = "http://localhost:8080";
-const HOST = "http://api-gateway:8080";
+const HOST = "http://api-gateway:9999";
 
 async function testApp() {
   while (true) {

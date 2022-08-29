@@ -4,7 +4,7 @@ services:
   config-server:
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: spring-petclinic-config-server/Dockerfile
       args:
         ARTIFACT_NAME: ./spring-petclinic-config-server/target/spring-petclinic-config-server-2.6.7
         DOCKERIZE_VERSION: v0.6.1
@@ -126,7 +126,7 @@ services:
       - discovery-server
     entrypoint: [ "./dockerize","-wait=http://discovery-server:8761","-timeout=60s","-wait-retry-interval=5s", "--","java", "-javaagent:newrelic/newrelic.jar", "org.springframework.boot.loader.JarLauncher" ]
     ports:
-      - 8080:8080
+      - 9999:9999
 
   tracing-server:
     image: openzipkin/zipkin
