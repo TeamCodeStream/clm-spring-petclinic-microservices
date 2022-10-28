@@ -28,7 +28,7 @@ common: &default_settings
   # Default is true.
   agent_enabled: true
 
-#  app_name: CLM Java Petclinic Microservices
+  app_name: Java CLM Test App
 
   # To enable high security, set this property to true. When in high
   # security mode, the agent will use SSL and obfuscated SQL. Additionally,
@@ -331,21 +331,24 @@ common: &default_settings
   # Names and values may not contain colons (:) or semicolons (;).
   labels:
 
-    # An example label
-    #label_name: label_value
+  # An example label
+  #label_name: label_value
 
 
-# Application Environments
-# ------------------------------------------
-# Environment specific settings are in this section.
-# You can use the environment to override the default settings.
-# For example, to change the app_name setting.
-# Use -Dnewrelic.environment=<environment> on the Java startup command line
-# to set the environment.
-# The default environment is production.
+  # Application Environments
+  # ------------------------------------------
+  # Environment specific settings are in this section.
+  # You can use the environment to override the default settings.
+  # For example, to change the app_name setting.
+  # Use -Dnewrelic.environment=<environment> on the Java startup command line
+  # to set the environment.
+  # The default environment is production.
 
-# NOTE if your application has other named environments, you should
-# provide configuration settings for these environments here.
+  # NOTE if your application has other named environments, you should
+  # provide configuration settings for these environments here.
+
+  code_level_metrics:
+    enabled: true
 
 development:
   <<: *default_settings

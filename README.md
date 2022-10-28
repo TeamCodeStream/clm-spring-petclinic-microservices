@@ -7,6 +7,23 @@ This microservices branch was initially derived from [AngularJS version](https:/
 To achieve that goal, we use Spring Cloud Gateway, Spring Cloud Circuit Breaker, Spring Cloud Config, Spring Cloud Sleuth, Resilience4j, Micrometer 
 and the Eureka Service Discovery from the [Spring Cloud Netflix](https://github.com/spring-cloud/spring-cloud-netflix) technology stack.
 
+## Starting services locally with docker-compose
+In order to start entire infrastructure using Docker, you have to build images by executing `./mvnw clean package`
+from a project root.
+
+Before starting docker configure your NewRelic ingest key in the environment variable `NEW_RELIC_LICENSE_KEY` i.e. `export NEW_RELIC_LICENSE_KEY=<your key>`
+
+Once images are ready, you can start them with a single command
+`docker-compose up`. Containers startup order is coordinated with [`dockerize` script](https://github.com/jwilder/dockerize).
+After starting services, it takes a while for API Gateway to be in sync with service registry,
+so don't be scared of initial Spring Cloud Gateway timeouts. You can track services availability using Eureka dashboard
+available by default at http://localhost:8761.
+
+The `master` branch uses a Amazon Corretto linux  with JRE 11 as Docker base.
+
+*NOTE: Under MacOSX or Windows, make sure that the Docker VM has enough memory to run the microservices. The default settings
+are usually not enough and make the `docker-compose up` painfully slow.*
+
 ## Starting services locally without Docker
 
 Every microservice is a Spring Boot application and can be started locally using IDE ([Lombok](https://projectlombok.org/) plugin has to be set up) or `../mvnw spring-boot:run` command. Please note that supporting services (Config and Discovery Server) must be started before any other application (Customers, Vets, Visits and API).
@@ -24,23 +41,6 @@ If everything goes well, you can access the following services at given location
 You can tell Config Server to use your local Git repository by using `native` Spring profile and setting
 `GIT_REPO` environment variable, for example:
 `-Dspring.profiles.active=native -DGIT_REPO=/projects/spring-petclinic-microservices-config`
-
-## Starting services locally with docker-compose
-In order to start entire infrastructure using Docker, you have to build images by executing `./mvnw clean package` 
-from a project root. 
-
-Before starting docker configure your NewRelic ingest key in the environment variable `NEW_RELIC_LICENSE_KEY` i.e. `export NEW_RELIC_LICENSE_KEY=<your key>`
-
-Once images are ready, you can start them with a single command
-`docker-compose up`. Containers startup order is coordinated with [`dockerize` script](https://github.com/jwilder/dockerize). 
-After starting services, it takes a while for API Gateway to be in sync with service registry,
-so don't be scared of initial Spring Cloud Gateway timeouts. You can track services availability using Eureka dashboard
-available by default at http://localhost:8761.
-
-The `master` branch uses a Amazon Corretto linux  with JRE 11 as Docker base. 
-
-*NOTE: Under MacOSX or Windows, make sure that the Docker VM has enough memory to run the microservices. The default settings
-are usually not enough and make the `docker-compose up` painfully slow.*
 
 
 ## Starting services locally with docker-compose and Java
